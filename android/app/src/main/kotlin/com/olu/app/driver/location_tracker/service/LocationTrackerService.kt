@@ -1,4 +1,4 @@
-package com.example.location_service_android.location_tracker.service
+package com.olu.app.driver.location_tracker.service
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
@@ -9,15 +9,15 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.widget.Toast
-import com.example.location_service_android.location_tracker.ANDROID_LOCATION_SERVICE_SENT_BROADCAST
-import com.example.location_service_android.location_tracker.REQUEST_LOCATION_INTERVAL
-import com.example.location_service_android.location_tracker.REQUEST_LOCATION_MINIMUM_DISTANCE
-import com.example.location_service_android.location_tracker.client.ILocationClient
-import com.example.location_service_android.location_tracker.client.LocationClient
-import com.example.location_service_android.location_tracker.remote.ILocationDataSender
-import com.example.location_service_android.location_tracker.remote.LocationDataSender
-import com.example.location_service_android.location_tracker.remote.LocationDataSenderWithLoopInterval
-import com.example.location_service_android.location_tracker.remote.LocationRequester
+import com.olu.app.driver.ANDROID_LOCATION_SERVICE_SENT_BROADCAST
+import com.olu.app.driver.REQUEST_LOCATION_INTERVAL
+import com.olu.app.driver.REQUEST_LOCATION_MINIMUM_DISTANCE
+import com.olu.app.driver.location_tracker.client.ILocationClient
+import com.olu.app.driver.location_tracker.client.LocationClient
+import com.olu.app.driver.location_tracker.remote.ILocationDataSender
+import com.olu.app.driver.location_tracker.remote.LocationDataSender
+import com.olu.app.driver.location_tracker.remote.LocationDataSenderWithLoopInterval
+import com.olu.app.driver.location_tracker.remote.LocationRequester
 
 class LocationTrackerService : Service(), ILocationDataSender.LocationDataSenderListener {
 

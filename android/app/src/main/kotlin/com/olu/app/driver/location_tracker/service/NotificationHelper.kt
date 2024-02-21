@@ -1,4 +1,4 @@
-package com.example.location_service_android.location_tracker.service
+package com.olu.app.driver.location_tracker.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -6,7 +6,7 @@ import android.app.Service
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import com.example.location_service_android.R
+import com.olu.app.driver.R
 
 class NotificationHelper(private val context: Context) {
     companion object {

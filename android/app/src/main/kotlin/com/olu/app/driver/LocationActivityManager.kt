@@ -1,4 +1,4 @@
-package com.example.location_service_android.location_tracker
+package com.olu.app.driver
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -6,7 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import androidx.annotation.NonNull
-import com.example.location_service_android.location_tracker.service.LocationTrackerService
+import com.olu.app.driver.location_tracker.service.LocationTrackerService
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
@@ -57,7 +57,9 @@ class LocationActivityManager(private val activity: FlutterActivity) {
             override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
                 events?.let {
                     sinkLocationBR = SinkBroadCastReceiver(it)
-                    activity.registerReceiver(sinkLocationBR, IntentFilter(ANDROID_LOCATION_SERVICE_SENT_BROADCAST))
+                    activity.registerReceiver(sinkLocationBR, IntentFilter(
+                        ANDROID_LOCATION_SERVICE_SENT_BROADCAST
+                    ))
                 }
             }
 

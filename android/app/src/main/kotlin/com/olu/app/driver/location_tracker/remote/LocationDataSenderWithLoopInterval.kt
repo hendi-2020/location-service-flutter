@@ -1,4 +1,4 @@
-package com.example.location_service_android.location_tracker.remote
+package com.olu.app.driver.location_tracker.remote
 
 import java.util.Timer
 import java.util.TimerTask

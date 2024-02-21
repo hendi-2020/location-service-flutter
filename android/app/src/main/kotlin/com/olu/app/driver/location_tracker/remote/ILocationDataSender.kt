@@ -1,4 +1,4 @@
-package com.example.location_service_android.location_tracker.remote
+package com.olu.app.driver.location_tracker.remote
 
 interface ILocationDataSender {
     fun sendCurrentLocation(lat: String, lon: String)

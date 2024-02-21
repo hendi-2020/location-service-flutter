@@ -1,6 +1,6 @@
-package com.example.location_service_android.location_tracker.remote
+package com.olu.app.driver.location_tracker.remote
 
-import com.example.location_service_android.BuildConfig
+import com.olu.app.driver.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

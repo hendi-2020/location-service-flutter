@@ -1,4 +1,4 @@
-package com.example.location_service_android.location_tracker
+package com.olu.app.driver
 
 const val REQUEST_LOCATION_INTERVAL = 10000L
 const val REQUEST_LOCATION_MINIMUM_DISTANCE = 20.0f

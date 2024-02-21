@@ -1,4 +1,4 @@
-package com.example.location_service_android.location_tracker.client
+package com.olu.app.driver.location_tracker.client
 
 interface ILocationClient {
     fun getLocationUpdates(interval: Long, minimumDistance: Float)

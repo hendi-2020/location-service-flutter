@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.location_service_android">
+    package="com.olu.app.driver">
 
     <!-- Add these permissions to allow tracking location -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,7 +14,7 @@
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"> <!-- Add usesCleartextTraffic to allow send non secure http request -->
         <activity
-            android:name=".MainActivity"
+            android:name="com.olu.app.driver.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

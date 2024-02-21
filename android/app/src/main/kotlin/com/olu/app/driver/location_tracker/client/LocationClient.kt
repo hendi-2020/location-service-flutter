@@ -1,4 +1,4 @@
-package com.example.location_service_android.location_tracker.client
+package com.olu.app.driver.location_tracker.client
 
 import android.Manifest
 import android.annotation.SuppressLint

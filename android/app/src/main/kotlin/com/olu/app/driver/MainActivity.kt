@@ -1,7 +1,6 @@
-package com.example.location_service_android
+package com.olu.app.driver
 
 import androidx.annotation.NonNull
-import com.example.location_service_android.location_tracker.LocationActivityManager
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 
