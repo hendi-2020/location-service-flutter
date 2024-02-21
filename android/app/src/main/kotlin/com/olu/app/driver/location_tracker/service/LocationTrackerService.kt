@@ -9,9 +9,9 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.widget.Toast
-import com.olu.app.driver.ANDROID_LOCATION_SERVICE_SENT_BROADCAST
-import com.olu.app.driver.REQUEST_LOCATION_INTERVAL
-import com.olu.app.driver.REQUEST_LOCATION_MINIMUM_DISTANCE
+import com.olu.app.driver.location_tracker.ANDROID_LOCATION_SERVICE_SENT_BROADCAST
+import com.olu.app.driver.location_tracker.REQUEST_LOCATION_INTERVAL
+import com.olu.app.driver.location_tracker.REQUEST_LOCATION_MINIMUM_DISTANCE
 import com.olu.app.driver.location_tracker.client.ILocationClient
 import com.olu.app.driver.location_tracker.client.LocationClient
 import com.olu.app.driver.location_tracker.remote.ILocationDataSender

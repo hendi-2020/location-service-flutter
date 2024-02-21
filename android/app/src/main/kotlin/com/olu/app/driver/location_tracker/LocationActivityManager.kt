@@ -1,4 +1,4 @@
-package com.olu.app.driver
+package com.olu.app.driver.location_tracker
 
 import android.content.BroadcastReceiver
 import android.content.Context

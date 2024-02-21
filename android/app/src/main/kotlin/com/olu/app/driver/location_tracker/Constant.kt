@@ -1,4 +1,4 @@
-package com.olu.app.driver
+package com.olu.app.driver.location_tracker
 
 const val REQUEST_LOCATION_INTERVAL = 10000L
 const val REQUEST_LOCATION_MINIMUM_DISTANCE = 20.0f
