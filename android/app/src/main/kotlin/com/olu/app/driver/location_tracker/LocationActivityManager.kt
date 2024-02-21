@@ -71,6 +71,7 @@ class LocationActivityManager(private val activity: FlutterActivity) {
      * args: The parameters that passed from dart class.
      * */
     private fun mapArgsToBundle(args: Map<String, Any>): Bundle {
+        val baseUrl = args["base_url"] as String
         val data = args["data"] as Map<String, Any>
         val interval = args["interval"] as Int
         val minimumDistance = args["minimum_distance"] as Int
@@ -78,6 +79,7 @@ class LocationActivityManager(private val activity: FlutterActivity) {
         val enableLoop = args["enable_loop"] as Boolean
 
         return Bundle().apply {
+            putString(LocationTrackerService.EXTRA_KEY_BASE_URL, baseUrl)
             putString(LocationTrackerService.EXTRA_KEY_DATA, data.toString())
             putLong(LocationTrackerService.EXTRA_KEY_INTERVAL, interval.toLong())
             putFloat(LocationTrackerService.EXTRA_KEY_MINIMUM_DISTANCE, minimumDistance.toFloat())
@@ -107,7 +109,8 @@ class LocationActivityManager(private val activity: FlutterActivity) {
             intent.extras?.let {
                 val lon = it.getString("lon")
                 val lat = it.getString("lat")
-                val location = mapOf("lon" to lon, "lat" to lat)
+                val response = it.getString("response")
+                val location = mapOf("lon" to lon, "lat" to lat, "response" to response)
                 sink.success(location)
             }
         }

@@ -5,7 +5,7 @@ interface ILocationDataSender {
     fun dispose()
 
     interface LocationDataSenderListener {
-        fun onRequestSuccess(lat: String, lon: String)
-        fun onRequestFailed(message: String)
+        fun onRequestSuccess(lat: String, lon: String, response: String)
+        fun onRequestFailed()
     }
 }

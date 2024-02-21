@@ -8,15 +8,18 @@ class LocationDataSender(
 
     override fun sendCurrentLocation(lat: String, lon: String) {
         if (skippCallApi) {
-            listener?.onRequestSuccess(lat, lon)
+            listener?.onRequestSuccess(lat, lon, "{}")
         } else {
-            when (val result = locationRequester.sendLocation(lat, lon)) {
-                is LocationRequester.Result.Success -> listener?.onRequestSuccess(
-                    lat,
-                    lon
-                )
+            locationRequester.sendLocation(lat, lon) { result ->
+                when (result) {
+                    is LocationRequester.Result.Success -> listener?.onRequestSuccess(
+                        lat,
+                        lon,
+                        result.response
+                    )
 
-                is LocationRequester.Result.Failed -> listener?.onRequestFailed(result.message)
+                    is LocationRequester.Result.Failed -> listener?.onRequestFailed()
+                }
             }
         }
     }

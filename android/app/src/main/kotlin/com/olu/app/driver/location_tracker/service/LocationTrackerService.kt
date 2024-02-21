@@ -1,15 +1,12 @@
 package com.olu.app.driver.location_tracker.service
 
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.app.Service
 import android.content.Intent
 import android.os.Build
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
-import android.widget.Toast
 import com.olu.app.driver.location_tracker.ANDROID_LOCATION_SERVICE_SENT_BROADCAST
+import com.olu.app.driver.location_tracker.DEFAULT_BASE_URL
 import com.olu.app.driver.location_tracker.REQUEST_LOCATION_INTERVAL
 import com.olu.app.driver.location_tracker.REQUEST_LOCATION_MINIMUM_DISTANCE
 import com.olu.app.driver.location_tracker.client.ILocationClient
@@ -30,6 +27,7 @@ class LocationTrackerService : Service(), ILocationDataSender.LocationDataSender
     private var mData = "{}"
     private var mSkipCallApi = false
     private var mEnableLoop = false
+    private var mBaseUrl = DEFAULT_BASE_URL
 
     private var isTrackingStated = false
 
@@ -42,6 +40,7 @@ class LocationTrackerService : Service(), ILocationDataSender.LocationDataSender
         const val EXTRA_KEY_DATA = "extra_data"
         const val EXTRA_KEY_SKIP_CALL_API = "extra_skip_call_api"
         const val EXTRA_KEY_ENABLE_LOOP = "extra_enable_loop"
+        const val EXTRA_KEY_BASE_URL = "extra_base_url"
 
         const val EXTRA_KEY_ARGS = "extra_args"
     }
@@ -81,17 +80,18 @@ class LocationTrackerService : Service(), ILocationDataSender.LocationDataSender
                         mData = it.getString(EXTRA_KEY_DATA, "{}")
                         mSkipCallApi = it.getBoolean(EXTRA_KEY_SKIP_CALL_API, false)
                         mEnableLoop = it.getBoolean(EXTRA_KEY_ENABLE_LOOP, false)
+                        mBaseUrl = it.getString(EXTRA_KEY_BASE_URL, DEFAULT_BASE_URL).ifEmpty { DEFAULT_BASE_URL }
 
-                        if (mEnableLoop) {
-                            mLocationDataSender = LocationDataSenderWithLoopInterval(
-                                LocationRequester(mData),
+                        mLocationDataSender = if (mEnableLoop) {
+                            LocationDataSenderWithLoopInterval(
+                                LocationRequester(mData, mBaseUrl),
                                 mInterval,
                                 mSkipCallApi,
                                 this
                             )
                         } else {
-                            mLocationDataSender = LocationDataSender(
-                                LocationRequester(mData),
+                            LocationDataSender(
+                                LocationRequester(mData, mBaseUrl),
                                 mSkipCallApi,
                                 this
                             )
@@ -102,21 +102,19 @@ class LocationTrackerService : Service(), ILocationDataSender.LocationDataSender
                 }
             }
 
-            ACTION_STOP_TRACKING -> stopTracking()
+            ACTION_STOP_TRACKING -> sendLastLocationAndStopTracking()
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
-    override fun onRequestSuccess(lat: String, lon: String) {
-        showToast("Location sent")
-        sendLocationBroadcast(lat, lon)
+    override fun onRequestSuccess(lat: String, lon: String, response: String) {
+        sendLocationBroadcast(lat, lon, response)
     }
 
-    override fun onRequestFailed(message: String) {
+    override fun onRequestFailed() {
         TODO("Not yet implemented")
     }
 
-    @TargetApi(Build.VERSION_CODES.ECLAIR)
     private fun startTracking() {
         try {
             mLocationClient?.getLocationUpdates(mInterval, mMinimumDistance)
@@ -126,23 +124,46 @@ class LocationTrackerService : Service(), ILocationDataSender.LocationDataSender
             )
         } catch (e: ILocationClient.LocationException) {
             stopTracking()
-            showToast(e.error)
         }
     }
 
-    private fun showToast(message: String) {
-        Handler(Looper.getMainLooper()).post {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    private fun sendLastLocationAndStopTracking() {
+        if (!isTrackingStated) {
+            stopTracking()
+            return
+        }
+
+        mLocationClient?.getLastLocation { lon, lat ->
+            LocationDataSender(
+                LocationRequester(mData, mBaseUrl),
+                mSkipCallApi,
+                object : ILocationDataSender.LocationDataSenderListener {
+
+                    override fun onRequestSuccess(lat: String, lon: String, response: String) {
+                        sendLocationBroadcast(lat, lon, response)
+                        stopTracking()
+                    }
+
+                    override fun onRequestFailed() {
+                        stopTracking()
+                    }
+                }
+            ).sendCurrentLocation(
+                lat.toString(),
+                lon.toString()
+            )
         }
     }
 
-    private fun sendLocationBroadcast(lat: String, lon: String) {
+    private fun sendLocationBroadcast(lat: String, lon: String, response: String) {
         sendBroadcast(Intent(ANDROID_LOCATION_SERVICE_SENT_BROADCAST).apply {
             putExtra("lat", lat)
             putExtra("lon", lon)
+            putExtra("response", response)
         })
     }
 
+    @Suppress("DEPRECATION")
     @SuppressLint("NewApi")
     private fun stopTracking() {
         mLocationClient?.dispose()

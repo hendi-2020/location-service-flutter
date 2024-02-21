@@ -25,18 +25,21 @@ class LocationDataSenderWithLoopInterval(
             timer?.scheduleAtFixedRate(object : TimerTask() {
                 override fun run() {
                     if (skippCallApi) {
-                        listener?.onRequestSuccess(lat, lon)
+                        listener?.onRequestSuccess(lat, lon, "{}")
                     } else {
                         isRequesting = true
-                        when (val result = locationRequester.sendLocation(lat, lon)) {
-                            is LocationRequester.Result.Success -> listener?.onRequestSuccess(
-                                lat,
-                                lon
-                            )
+                        locationRequester.sendLocation(lat, lon) { result ->
+                            when (result) {
+                                is LocationRequester.Result.Success -> listener?.onRequestSuccess(
+                                    lat,
+                                    lon,
+                                    result.response
+                                )
 
-                            is LocationRequester.Result.Failed -> listener?.onRequestFailed(result.message)
+                                is LocationRequester.Result.Failed -> listener?.onRequestFailed()
+                            }
+                            isRequesting = false
                         }
-                        isRequesting = false
                     }
                 }
             }, 0L, interval)

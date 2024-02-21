@@ -42,12 +42,21 @@ class _MyHomePageState extends State<MyHomePage> {
       const token =
           "GBczIkdeFn4TUBErXUYSVAAZAQAIBVkKBlgXbnpwEgcCAVZBHxExPRMDQwFLQ01AJShBAhNFCFoIWEEMQRsaNC8aC0EMUlAOAgAGD1VVUxAf";
 
+      const baseUrl = "http://34.101.74.181:8080/";
+
       locationService.startLocationTracking(
-        token: token, // user login token
-        interval: 10000, // request location interval to fetch location update
-        minDistance: 20, // minimum distance user should move to fetch location update
-        skipCallApi: true, // this is for testing purpose, set `true` to ignore send location to server
-        enableLoop: false, // request option, if `true` will loop every interval time, if `false` will send only get new position
+        // dynamic base url
+        baseUrl: baseUrl,
+        // user login token
+        token: token,
+        // request location interval to fetch location update
+        interval: 10000,
+        // minimum distance user should move to fetch location update
+        minDistance: 20,
+        // this is for testing purpose, set `true` to ignore send location to server
+        skipCallApi: true,
+        // request option, if `true` will loop every interval time, if `false` will send only get new position
+        enableLoop: false,
       );
     });
   }
@@ -68,8 +77,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     // start to listen location sent stream
-    locationService.receiveLocationStream().listen((location) {
-      _listData.add("${location.lon}, ${location.lat}");
+    locationService.receiveLocationStream().listen((result) {
+      _listData.add(
+          "${result.location.lon}, ${result.location.lat}\n ${result.response}");
       _listTime.add(_getCurrentTime());
       setState(() {});
     });

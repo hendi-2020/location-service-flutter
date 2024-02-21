@@ -1,6 +1,7 @@
 package com.olu.app.driver.location_tracker.remote
 
 import com.olu.app.driver.BuildConfig
+import com.olu.app.driver.location_tracker.DEFAULT_BASE_URL
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -8,7 +9,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitHelper {
-    private const val BASE_URL = "http://34.101.74.181:8080/"
     private const val TIME_OUT = 30L
 
     private val interceptor = run {
@@ -35,7 +35,7 @@ object RetrofitHelper {
 
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(DEFAULT_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()

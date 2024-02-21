@@ -3,13 +3,25 @@ package com.olu.app.driver.location_tracker.remote
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class LocationRequester(data: String) {
+class LocationRequester(data: String, baseUrl: String) {
+
+    companion object {
+        private const val PATH = "bo/api/driver/execute"
+    }
 
     private var jsonBody = JSONObject()
+    private var fullUrl = when {
+        baseUrl.last() == '/' -> baseUrl.plus(PATH)
+        else -> baseUrl.plus("/").plus(PATH)
+    }
 
     init {
         try {
@@ -18,16 +30,22 @@ class LocationRequester(data: String) {
         }
     }
 
-    fun sendLocation(lat: String, lon: String): Result {
+    fun sendLocation(lat: String, lon: String, callback: (Result) -> Unit) {
         val apiService = RetrofitHelper.getService()
         val body = generateRequestBody(lat, lon)
-        val response = apiService.sendLocationInfo(body).execute()
 
-        if (response.isSuccessful) {
-            return Result.Success
-        } else {
-            return Result.Failed(response.message())
-        }
+        apiService.sendLocationInfo(fullUrl, body).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(
+                call: Call<ResponseBody>,
+                response: Response<ResponseBody>
+            ) {
+                callback.invoke(Result.Success(response.body()?.string().orEmpty()))
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                callback.invoke(Result.Failed)
+            }
+        })
     }
 
     private fun generateRequestBody(lat: String, lon: String): RequestBody {
@@ -52,7 +70,7 @@ class LocationRequester(data: String) {
     }
 
     sealed class Result {
-        object Success : Result()
-        class Failed(val message: String) : Result()
+        class Success(val response: String) : Result()
+        object Failed : Result()
     }
 }

@@ -1,13 +1,15 @@
 import 'package:flutter/services.dart';
 
 class LocationService {
-  static const methodChannelStr = 'android_location_service/mc_location_service';
+  static const methodChannelStr =
+      'android_location_service/mc_location_service';
   static const eventChannelStr = 'android_location_service/ec_location_service';
 
   static const methodChannel = MethodChannel(methodChannelStr);
   static const eventChannel = EventChannel(eventChannelStr);
 
   startLocationTracking({
+    required String baseUrl,
     required String token,
     int interval = 10000,
     int minDistance = 20,
@@ -26,6 +28,7 @@ class LocationService {
     };
 
     final args = {
+      "base_url": baseUrl,
       "data": data,
       "interval": interval,
       "minimum_distance": minDistance,
@@ -40,11 +43,19 @@ class LocationService {
     methodChannel.invokeMethod('stopLocationTracking');
   }
 
-  Stream<Location> receiveLocationStream() {
-    return eventChannel
-        .receiveBroadcastStream()
-        .asyncMap((event) => Location(event["lat"], event["lon"]));
+  Stream<LocationServiceResult> receiveLocationStream() {
+    return eventChannel.receiveBroadcastStream().asyncMap((event) {
+      return LocationServiceResult(
+          Location(event["lat"], event["lon"]), event["response"]);
+    });
   }
+}
+
+class LocationServiceResult {
+  Location location;
+  String response;
+
+  LocationServiceResult(this.location, this.response);
 }
 
 class Location {

@@ -57,6 +57,16 @@ class LocationClient(
         client.requestLocationUpdates(request, locationCallback, Looper.getMainLooper())
     }
 
+    @SuppressLint("MissingPermission")
+    override fun getLastLocation(callback: (lon: Double, lat: Double) -> Unit) {
+        if (!context.hasLocationPermission()) {
+            throw ILocationClient.LocationException("Location permission not granted")
+        }
+        client.lastLocation.addOnSuccessListener {
+            callback.invoke(it.longitude, it.latitude)
+        }
+    }
+
     override fun dispose() {
         client.removeLocationUpdates(locationCallback)
     }
