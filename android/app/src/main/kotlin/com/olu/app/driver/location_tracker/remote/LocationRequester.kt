@@ -34,15 +34,15 @@ class LocationRequester(data: String, baseUrl: String) {
         val apiService = RetrofitHelper.getService()
         val body = generateRequestBody(lat, lon)
 
-        apiService.sendLocationInfo(fullUrl, body).enqueue(object : Callback<ResponseBody> {
+        apiService.sendLocationInfo(fullUrl, body).enqueue(object : Callback<ResponseEntity> {
             override fun onResponse(
-                call: Call<ResponseBody>,
-                response: Response<ResponseBody>
+                call: Call<ResponseEntity>,
+                response: Response<ResponseEntity>
             ) {
-                callback.invoke(Result.Success(response.body()?.string().orEmpty()))
+                callback.invoke(Result.Success(response.body()))
             }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+            override fun onFailure(call: Call<ResponseEntity>, t: Throwable) {
                 callback.invoke(Result.Failed)
             }
         })
@@ -70,7 +70,7 @@ class LocationRequester(data: String, baseUrl: String) {
     }
 
     sealed class Result {
-        class Success(val response: String) : Result()
+        class Success(val responseEntity: ResponseEntity?) : Result()
         object Failed : Result()
     }
 }

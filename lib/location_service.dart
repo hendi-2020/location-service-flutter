@@ -11,6 +11,7 @@ class LocationService {
   startLocationTracking({
     required String baseUrl,
     required String token,
+    required int errorTokenCode,
     int interval = 10000,
     int minDistance = 20,
     bool skipCallApi = true,
@@ -33,7 +34,8 @@ class LocationService {
       "interval": interval,
       "minimum_distance": minDistance,
       "skip_call_api": skipCallApi,
-      "enable_loop": enableLoop
+      "enable_loop": enableLoop,
+      "error_token_code": errorTokenCode,
     };
 
     methodChannel.invokeMethod('startLocationTracking', args);

@@ -49,12 +49,14 @@ class _MyHomePageState extends State<MyHomePage> {
         baseUrl: baseUrl,
         // user login token
         token: token,
+        // error token code
+        errorTokenCode: -54,
         // request location interval to fetch location update
         interval: 10000,
         // minimum distance user should move to fetch location update
         minDistance: 20,
         // this is for testing purpose, set `true` to ignore send location to server
-        skipCallApi: true,
+        skipCallApi: false,
         // request option, if `true` will loop every interval time, if `false` will send only get new position
         enableLoop: false,
       );

@@ -77,6 +77,7 @@ class LocationActivityManager(private val activity: FlutterActivity) {
         val minimumDistance = args["minimum_distance"] as Int
         val skipCallApi = args["skip_call_api"] as Boolean
         val enableLoop = args["enable_loop"] as Boolean
+        val errorTokenCode = args["error_token_code"] as Int
 
         return Bundle().apply {
             putString(LocationTrackerService.EXTRA_KEY_BASE_URL, baseUrl)
@@ -85,6 +86,7 @@ class LocationActivityManager(private val activity: FlutterActivity) {
             putFloat(LocationTrackerService.EXTRA_KEY_MINIMUM_DISTANCE, minimumDistance.toFloat())
             putBoolean(LocationTrackerService.EXTRA_KEY_SKIP_CALL_API, skipCallApi)
             putBoolean(LocationTrackerService.EXTRA_KEY_ENABLE_LOOP, enableLoop)
+            putInt(LocationTrackerService.EXTRA_KEY_ERROR_TOKEN_CODE, errorTokenCode)
         }
     }
 

@@ -8,3 +8,4 @@ const val ANDROID_LOCATION_SERVICE_EVENT_CHANNEL = "android_location_service/ec_
 const val ANDROID_LOCATION_SERVICE_SENT_BROADCAST = "android_location_service_android/bc_location_service"
 
 const val DEFAULT_BASE_URL = "http://34.101.74.181:8080/"
+const val DEFAULT_ERROR_TOKEN_CODE = -54

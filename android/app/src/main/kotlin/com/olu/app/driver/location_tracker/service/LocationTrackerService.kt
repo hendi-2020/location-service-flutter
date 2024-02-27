@@ -5,8 +5,10 @@ import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import com.google.gson.Gson
 import com.olu.app.driver.location_tracker.ANDROID_LOCATION_SERVICE_SENT_BROADCAST
 import com.olu.app.driver.location_tracker.DEFAULT_BASE_URL
+import com.olu.app.driver.location_tracker.DEFAULT_ERROR_TOKEN_CODE
 import com.olu.app.driver.location_tracker.REQUEST_LOCATION_INTERVAL
 import com.olu.app.driver.location_tracker.REQUEST_LOCATION_MINIMUM_DISTANCE
 import com.olu.app.driver.location_tracker.client.ILocationClient
@@ -15,6 +17,7 @@ import com.olu.app.driver.location_tracker.remote.ILocationDataSender
 import com.olu.app.driver.location_tracker.remote.LocationDataSender
 import com.olu.app.driver.location_tracker.remote.LocationDataSenderWithLoopInterval
 import com.olu.app.driver.location_tracker.remote.LocationRequester
+import com.olu.app.driver.location_tracker.remote.ResponseEntity
 
 class LocationTrackerService : Service(), ILocationDataSender.LocationDataSenderListener {
 
@@ -28,6 +31,7 @@ class LocationTrackerService : Service(), ILocationDataSender.LocationDataSender
     private var mSkipCallApi = false
     private var mEnableLoop = false
     private var mBaseUrl = DEFAULT_BASE_URL
+    private var mErrorTokenCode = DEFAULT_ERROR_TOKEN_CODE
 
     private var isTrackingStated = false
 
@@ -41,6 +45,7 @@ class LocationTrackerService : Service(), ILocationDataSender.LocationDataSender
         const val EXTRA_KEY_SKIP_CALL_API = "extra_skip_call_api"
         const val EXTRA_KEY_ENABLE_LOOP = "extra_enable_loop"
         const val EXTRA_KEY_BASE_URL = "extra_base_url"
+        const val EXTRA_KEY_ERROR_TOKEN_CODE = "extra_error_token_code"
 
         const val EXTRA_KEY_ARGS = "extra_args"
     }
@@ -81,6 +86,7 @@ class LocationTrackerService : Service(), ILocationDataSender.LocationDataSender
                         mSkipCallApi = it.getBoolean(EXTRA_KEY_SKIP_CALL_API, false)
                         mEnableLoop = it.getBoolean(EXTRA_KEY_ENABLE_LOOP, false)
                         mBaseUrl = it.getString(EXTRA_KEY_BASE_URL, DEFAULT_BASE_URL).ifEmpty { DEFAULT_BASE_URL }
+                        mErrorTokenCode = it.getInt(EXTRA_KEY_ERROR_TOKEN_CODE, DEFAULT_ERROR_TOKEN_CODE)
 
                         mLocationDataSender = if (mEnableLoop) {
                             LocationDataSenderWithLoopInterval(
@@ -107,8 +113,12 @@ class LocationTrackerService : Service(), ILocationDataSender.LocationDataSender
         return super.onStartCommand(intent, flags, startId)
     }
 
-    override fun onRequestSuccess(lat: String, lon: String, response: String) {
-        sendLocationBroadcast(lat, lon, response)
+    override fun onRequestSuccess(lat: String, lon: String, response: ResponseEntity) {
+        val responseString = Gson().toJson(response, ResponseEntity::class.java)
+        if (response.ret == mErrorTokenCode) {
+            stopTracking()
+        }
+        sendLocationBroadcast(lat, lon, responseString)
     }
 
     override fun onRequestFailed() {
@@ -139,8 +149,13 @@ class LocationTrackerService : Service(), ILocationDataSender.LocationDataSender
                 mSkipCallApi,
                 object : ILocationDataSender.LocationDataSenderListener {
 
-                    override fun onRequestSuccess(lat: String, lon: String, response: String) {
-                        sendLocationBroadcast(lat, lon, response)
+                    override fun onRequestSuccess(
+                        lat: String,
+                        lon: String,
+                        response: ResponseEntity
+                    ) {
+                        val responseString = Gson().toJson(response, ResponseEntity::class.java)
+                        sendLocationBroadcast(lat, lon, responseString)
                         stopTracking()
                     }
 

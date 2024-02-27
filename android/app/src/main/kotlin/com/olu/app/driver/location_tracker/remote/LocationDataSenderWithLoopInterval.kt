@@ -25,7 +25,7 @@ class LocationDataSenderWithLoopInterval(
             timer?.scheduleAtFixedRate(object : TimerTask() {
                 override fun run() {
                     if (skippCallApi) {
-                        listener?.onRequestSuccess(lat, lon, "{}")
+                        listener?.onRequestSuccess(lat, lon, ResponseEntity())
                     } else {
                         isRequesting = true
                         locationRequester.sendLocation(lat, lon) { result ->
@@ -33,7 +33,7 @@ class LocationDataSenderWithLoopInterval(
                                 is LocationRequester.Result.Success -> listener?.onRequestSuccess(
                                     lat,
                                     lon,
-                                    result.response
+                                    result.responseEntity ?: ResponseEntity()
                                 )
 
                                 is LocationRequester.Result.Failed -> listener?.onRequestFailed()
